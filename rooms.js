@@ -6,7 +6,7 @@ window.escapeRooms = [
     by: "Lillien Burns",
     year: "2026–27",
     desc: "Your plane went down over a tropical island. Find food, clean water, and shelter, then signal the next plane.",
-    cover: "stranded.png",
+    cover: "stranded-cover.jpg",
     game: "stranded.html"
   },
   {
@@ -15,7 +15,7 @@ window.escapeRooms = [
     by: "Chett Lloyd",
     year: "2026–27",
     desc: "Locked inside the sports complex overnight, you have to beat the challenges and get out before sunrise.",
-    cover: "escape-the-gym.png",
+    cover: "escape-the-gym-cover.jpg",
     game: "escape-the-gym.html"
   },
   {
@@ -23,7 +23,7 @@ window.escapeRooms = [
     title: "Escape the Evil Gym Teacher",
     by: "Vincent Walker",
     year: "2026–27",
-    cover: "gym-escape.png",
+    cover: "gym-escape-cover.jpg",
     game: "gym-escape.html"
   },
   {
@@ -31,7 +31,7 @@ window.escapeRooms = [
     title: "Area 51 Escape",
     by: "Gabe Salyers",
     year: "2026–27",
-    cover: "area-51-escape.png",
+    cover: "area-51-escape-cover.jpg",
     game: "area-51-escape.html"
   },
   {
@@ -39,9 +39,10 @@ window.escapeRooms = [
     title: "Cluttered Closet Escape",
     by: "Lydia Davis",
     year: "2026–27",
-    cover: "cluttered-closet-escape.png",
+    cover: "cluttered-closet-escape-cover.jpg",
     game: "cluttered-closet-escape.html"
   }
 ];
+
 
 
