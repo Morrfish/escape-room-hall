@@ -6,6 +6,7 @@ window.escapeRooms = [
     by: "Aiden Diller",
     year: "2026–27",
     desc: "Explore the prison in first person, solve puzzles, and find a way into the desert.",
+    cover: "escape-from-prison-cover.jpg",
     game: "escape-from-prison.html"
   },
   {
@@ -59,5 +60,6 @@ window.escapeRooms = [
     game: "never-ending-levels.html"
   }
 ];
+
 
 
