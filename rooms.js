@@ -1,6 +1,14 @@
 // Copy a room entry to add another game. Give it a unique id.
 window.escapeRooms = [
   {
+    id: "escape-from-prison",
+    title: "Escape From Prison",
+    by: "Aiden Diller",
+    year: "2026–27",
+    desc: "Explore the prison in first person, solve puzzles, and find a way into the desert.",
+    game: "escape-from-prison.html"
+  },
+  {
     id: "stranded",
     title: "Stranded: The Island Escape",
     by: "Lillien Burns",
@@ -51,3 +59,5 @@ window.escapeRooms = [
     game: "never-ending-levels.html"
   }
 ];
+
+
