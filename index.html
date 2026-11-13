@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mr. Morris’ Escape Room Hall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Rubik:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+[hidden]{ display:none !important; }
+/* Layout: a dark teal hallway of numbered doors, one wing per school year, newest wing first. Colors come from the Escape Room Hall logo. Single deliberate dark look. */
+:root{
+  --night:#0b1b20;      /* logo outline: deep teal-black */
+  --wall:#103038;       /* logo teal, shadowed */
+  --wall2:#15434b;      /* logo teal */
+  --line:#24606a;
+  --chalk:#f6ecd4;      /* logo banner cream */
+  --dust:#a8c2bf;       /* muted text */
+  --brass:#f4a23a;      /* logo orange: play, accents */
+  --brassInk:#1b1206;
+  --lamp:#ffd27a;       /* lantern glow */
+  --door:#7a3f22;       /* logo door wood */
+  --alarm:#ef6a5c;
+  --ok:#86d0a4;
+  --f-display:"Alfa Slab One", "Rockwell", Georgia, serif;
+  --f-label:"Rubik", system-ui, sans-serif;
+  --f-body:"Rubik", system-ui, sans-serif;
+  color-scheme: dark;
+}
+*,*::before,*::after{ box-sizing:border-box; }
+html{ scroll-padding-top:env(safe-area-inset-top,0px); }
+body{
+  margin:0; min-height:100%; color:var(--chalk); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  background:var(--night);
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% 0%, rgba(243,210,122,.10), transparent 70%),
+    repeating-linear-gradient(90deg, transparent 0 79px, rgba(255,255,255,.018) 79px 80px);
+}
+body::before{ content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--night); }
+button,input,textarea,select{ font:inherit; color:inherit; }
+button{ cursor:pointer; }
+:focus-visible{ outline:3px solid var(--lamp); outline-offset:3px; }
+.wrap{ max-width:1320px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); }
+
+/* header */
+header{ position:sticky; top:env(safe-area-inset-top,0px); z-index:9; background:rgba(15,20,24,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
+header .wrap{ display:flex; align-items:center; gap:12px 16px; flex-wrap:wrap; padding-block:12px; }
+.brand{ margin:0 auto 0 0; display:flex; align-items:center; gap:12px; flex-wrap:wrap; min-width:0; }
+.brand img{ height:64px; width:auto; display:block; filter:drop-shadow(0 4px 8px rgba(0,0,0,.5)); }
+.brand h1{ margin:0; font-family:var(--f-display); font-weight:400; font-size:clamp(22px,3vw,32px); line-height:1; text-transform:uppercase; }
+.brand h1 span{ color:var(--brass); }
+.brand small{ font-family:var(--f-label); color:var(--dust); font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+.brand.has-logo h1{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+.hero-logo{ display:block; width:min(520px,100%); height:auto; margin:4px auto 0; filter:drop-shadow(0 18px 30px rgba(0,0,0,.55)); }
+.search{ width:min(260px,100%); padding:9px 14px; border-radius:8px; border:1px solid var(--line); background:var(--wall); }
+.search::placeholder{ color:var(--dust); }
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border:1.5px solid var(--chalk); background:transparent; border-radius:8px; padding:9px 16px; font-weight:700; }
+.btn:hover{ background:rgba(255,255,255,.06); }
+.btn.brass{ background:var(--brass); color:var(--brassInk); border-color:var(--brass); }
+.btn.brass:hover{ background:var(--lamp); border-color:var(--lamp); }
+.btn.danger{ border-color:var(--alarm); color:var(--alarm); }
+.btn:disabled{ opacity:.5; cursor:default; }
+
+/* intro + year chips */
+.intro{ padding-block:28px 6px; display:grid; gap:14px; }
+.intro p{ margin:0; max-width:62ch; color:var(--dust); font-size:16px; }
+.intro p b{ color:var(--chalk); font-weight:700; }
+.chips{ display:flex; gap:8px; flex-wrap:wrap; }
+.chip{ border:1px solid var(--line); background:var(--wall); border-radius:999px; padding:6px 14px; font-family:var(--f-label); font-size:14px; }
+.chip[aria-pressed="true"]{ background:var(--brass); color:var(--brassInk); border-color:var(--brass); }
+
+/* wings */
+main{ padding-block:8px 70px; }
+.wing{ margin-top:34px; }
+.wing-head{ display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+.wing-head h2{ margin:0; font-family:var(--f-display); font-weight:400; font-size:24px; color:var(--brass); line-height:1; white-space:nowrap; }
+.wing-head .rule{ flex:1; height:1px; background:linear-gradient(90deg, var(--line), transparent); }
+.wing-head .count{ font-family:var(--f-label); color:var(--dust); font-size:14px; white-space:nowrap; }
+.doors{ display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap:22px; }
+
+/* a door card */
+.door{ position:relative; display:flex; flex-direction:column; min-width:0; background:linear-gradient(180deg, var(--wall2), var(--wall)); border:2px solid var(--line); border-top:5px solid var(--brass); border-radius:10px 10px 4px 4px; padding:12px 12px 14px; box-shadow:0 18px 30px -18px rgba(0,0,0,.8); transition:transform .25s ease, box-shadow .25s ease; }
+.door:hover{ transform:translateY(-4px); box-shadow:0 26px 40px -18px rgba(0,0,0,.9), 0 0 0 1px rgba(214,169,74,.35); }
+.door .num{ position:absolute; top:-11px; left:14px; z-index:2; font-family:var(--f-label); font-size:12px; letter-spacing:1px; padding:2px 8px; border-radius:4px; background:var(--night); border:1px solid var(--line); color:var(--dust); }
+.window{ position:relative; aspect-ratio:4 / 3; max-width:100%; border-radius:6px; overflow:hidden; background:#0a0e11; box-shadow:inset 0 0 0 1px rgba(0,0,0,.6); }
+.window img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease; }
+.door:hover .window img{ transform:scale(1.04); }
+.window .noimg{ position:absolute; inset:0; display:grid; place-items:center; font-family:var(--f-display); font-size:42px; color:var(--line); }
+.lock{ position:absolute; right:10px; bottom:10px; width:34px; height:34px; border-radius:50%; display:grid; place-items:center; background:rgba(15,20,24,.85); border:1px solid rgba(214,169,74,.6); }
+.lock svg{ width:16px; height:16px; }
+.escaped .lock{ border-color:var(--ok); }
+.door h3{ margin:14px 2px 2px; font-family:var(--f-display); font-weight:400; font-size:21px; line-height:1.1; text-wrap:balance; overflow-wrap:anywhere; }
+.plate{ margin:6px 2px 0; display:inline-flex; align-self:flex-start; max-width:100%; padding:3px 10px; border-radius:3px; background:var(--chalk); color:var(--night); border:2px solid var(--night); font-family:var(--f-label); font-weight:700; font-size:13.5px; box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 2px 3px rgba(0,0,0,.4); overflow-wrap:anywhere; }
+.desc{ margin:10px 2px 0; color:var(--dust); font-size:14px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.door .foot{ margin-top:auto; padding-top:14px; display:flex; gap:8px; align-items:center; }
+.door .play{ flex:1; font-size:17px; padding:11px 16px; letter-spacing:.3px; }
+.play svg{ width:14px; height:14px; }
+.iconbtn{ width:42px; height:42px; padding:0; border-color:var(--line); color:var(--dust); }
+.iconbtn svg{ width:18px; height:18px; }
+
+.empty{ margin-top:30px; padding:46px 22px; border:1.5px dashed var(--line); border-radius:12px; text-align:center; color:var(--dust); display:grid; gap:12px; justify-items:center; }
+.empty b{ font-family:var(--f-display); font-weight:400; font-size:23px; color:var(--chalk); }
+.empty p{ margin:0; max-width:52ch; }
+
+/* player */
+.player{ position:fixed; inset:0; z-index:40; display:flex; flex-direction:column; background:#06090b; }
+.pbar{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:8px max(14px, env(safe-area-inset-right,0px)) 8px max(14px, env(safe-area-inset-left,0px)); padding-top:calc(8px + env(safe-area-inset-top,0px)); background:var(--wall); border-bottom:1px solid var(--line); }
+.pbar .t{ margin-right:auto; min-width:0; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+.pbar .t b{ font-family:var(--f-display); font-weight:400; font-size:18px; }
+.pbar .t span{ font-family:var(--f-label); color:var(--dust); font-size:13px; }
+.pbar .btn{ padding:7px 12px; font-size:14px; }
+.timer{ font-family:var(--f-label); font-variant-numeric:tabular-nums; color:var(--lamp); font-size:16px; padding:0 4px; }
+.player iframe{ flex:1; width:100%; border:0; background:#06090b; }
+.loading{ position:absolute; inset:60px 0 0; display:grid; place-items:center; color:var(--chalk); font-family:var(--f-label); font-size:18px; pointer-events:none; text-align:center; padding:20px; }
+
+/* dialogs */
+@media (max-width:560px){ .grid{ grid-template-columns:1fr; } .wing-head h2{ font-size:26px; } }
+@media (prefers-reduced-motion: reduce){ .door, .window img{ transition:none; } .door:hover{ transform:none; } }
+</style>
+
+<header>
+  <div class="wrap">
+    <div class="brand" id="brand"><img src="logo.png" alt="" id="brandLogo" hidden><h1>Mr. Morris’ <span>Escape Room Hall</span></h1><small>Built by Bluffton students</small></div>
+    <input class="search" id="search" type="search" placeholder="Find a room or student" aria-label="Find a room or student">
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="intro">
+    <img class="hero-logo" id="heroLogo" src="logo.png" alt="Mr. Morris’ Escape Room Hall" hidden>
+    <p>Every door in this hall is an escape room a student designed. <b>Pick a door and press Play.</b> The clock starts when the room opens. Can you get out?</p>
+    <div class="chips" id="chips" role="group" aria-label="Show rooms from"></div>
+  </section>
+  <main id="hall"><div class="empty"><b>Unlocking the hall…</b></div></main>
+</div>
+
+<div class="player" id="player" role="dialog" aria-modal="true" aria-labelledby="pTitle" hidden>
+  <div class="pbar">
+    <div class="t"><b id="pTitle"></b><span id="pBy"></span></div>
+    <span class="timer" id="timer" aria-label="Time in the room">00:00</span>
+    <button class="btn" id="escBtn">I escaped!</button>
+    <button class="btn" id="fsBtn">Full screen</button>
+    <button class="btn" id="closeGame">Leave the room</button>
+  </div>
+  <iframe sandbox="allow-scripts allow-pointer-lock" id="frame" title="Escape room" allow="fullscreen; autoplay"></iframe>
+  <div class="loading" id="loading">Unlocking the door…</div>
+</div>
+
+<script src="rooms.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+/* show the logo once it loads; until then the text title stands in */
+(() => { const probe = new Image(); probe.onload = () => { $('#heroLogo').hidden = false; $('#brandLogo').hidden = false; $('#brand').classList.add('has-logo'); }; probe.src = 'logo.png'; })();
+const rooms = window.escapeRooms;
+let query = '', yearFilter = 'all', playing = null;
+const LOCK = '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7.5" rx="1.5" fill="#d6a94a"/><path d="M5.2 7V5.2a2.8 2.8 0 0 1 5.6 0V7" fill="none" stroke="#d6a94a" stroke-width="1.6"/></svg>';
+const OPEN = '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7.5" rx="1.5" fill="#7cc59a"/><path d="M5.2 7V5.2a2.8 2.8 0 0 1 5.5-.8" fill="none" stroke="#7cc59a" stroke-width="1.6"/></svg>';
+const PLAY = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9.5-5.5z" fill="currentColor"/></svg>';
+
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+const store = { get(k){ try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} } };
+let escaped = store.get('escaped') || {};
+
+/* school years: Aug starts a new one */
+function fmt(ms){ const s = Math.floor(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = s % 60; return (h ? h + ':' : '') + String(m).padStart(2, '0') + ':' + String(x).padStart(2, '0'); }
+
+/* ---------- hall ---------- */
+function render(){
+  const hall = $('#hall');
+  const years = [...new Set(rooms.map(r => r.year || 'Other'))].sort().reverse();
+  $('#chips').innerHTML = years.length > 1
+    ? [['all','All years'], ...years.map(y => [y, y])].map(([v, t]) => `<button class="chip" data-y="${esc(v)}" aria-pressed="${yearFilter === v}">${esc(t)}</button>`).join('')
+    : '';
+  $('#chips').querySelectorAll('.chip').forEach(b => b.onclick = () => { yearFilter = b.dataset.y; render(); });
+
+  if (!rooms.length){
+    hall.textContent = "No rooms yet.";
+    return;
+  }
+  const q = query.toLowerCase();
+  const shown = rooms.filter(r => (yearFilter === 'all' || (r.year || 'Other') === yearFilter) && (!q || `${r.title} ${r.by} ${r.desc}`.toLowerCase().includes(q)));
+  if (!shown.length){ hall.innerHTML = `<div class="empty"><b>No rooms match</b><p>Try another name or clear the search.</p></div>`; return; }
+
+  let n = 0, html = '';
+  for (const y of years){
+    const list = shown.filter(r => (r.year || 'Other') === y);
+    if (!list.length) continue;
+    html += `<section class="wing" aria-labelledby="w-${esc(y)}"><div class="wing-head"><h2 id="w-${esc(y)}">${esc(y === 'Other' ? 'Other rooms' : y + ' School Year')}</h2><span class="rule"></span><span class="count">${list.length} ${list.length === 1 ? 'room' : 'rooms'}</span></div><div class="doors">`;
+    for (const r of list){
+      n++;
+      const done = escaped[r.id];
+      html += `<article class="door${done ? ' escaped' : ''}">
+        <span class="num">ROOM ${String(n).padStart(2, '0')}</span>
+        <div class="window">${r.cover ? `<img src="${esc(r.cover)}" alt="${esc(r.title)} picture" loading="lazy">` : `<span class="noimg">?</span>`}<span class="lock" title="${done ? 'You escaped in ' + fmt(done) : 'Not escaped yet'}">${done ? OPEN : LOCK}</span></div>
+        <h3>${esc(r.title)}</h3>
+        ${r.by ? `<span class="plate">by ${esc(r.by)}</span>` : ''}
+        ${r.desc ? `<p class="desc">${esc(r.desc)}</p>` : ''}
+        <div class="foot">
+          <button class="btn brass play" data-play="${esc(r.id)}">${PLAY} ${done ? 'Play again' : 'Play'}</button>
+        </div>
+      </article>`;
+    }
+    html += `</div></section>`;
+  }
+  hall.innerHTML = html;
+  const byId = id => rooms.find(r => r.id === id);
+  hall.querySelectorAll('[data-play]').forEach(b => b.onclick = () => play(byId(b.dataset.play)));
+}
+$('#search').oninput = e => { query = e.target.value.trim(); render(); };
+
+/* ---------- player ---------- */
+let tStart = 0, tInt = null;
+function play(r){
+  playing = r;
+  tStart = 0;
+  $('#escBtn').disabled = true;
+  $('#pTitle').textContent = r.title; $('#pBy').textContent = r.by ? 'by ' + r.by : '';
+  $('#timer').textContent = '00:00'; $('#escBtn').textContent = 'I escaped!';
+  $('#loading').textContent = 'Unlocking the door…'; $('#loading').hidden = false;
+  $('#player').hidden = false; document.body.style.overflow = 'hidden';
+
+  const frame = $('#frame');
+  frame.title = r.title;
+  frame.onload = () => {
+    if (playing !== r) return;
+    $('#loading').hidden = true;
+    $('#escBtn').disabled = false;
+    frame.focus();
+    tStart = Date.now();
+    tInt = setInterval(() => {
+      $('#timer').textContent = fmt(Date.now() - tStart);
+    }, 500);
+  };
+  frame.src = r.game;
+}
+function leave(){
+  const lastRoomId = playing?.id;
+  playing = null; clearInterval(tInt);
+  $('#frame').onload = null; $('#frame').src = 'about:blank';
+  $('#player').hidden = true; document.body.style.overflow = '';
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  document.querySelectorAll('[data-play]').forEach(button => {
+    if (button.dataset.play === lastRoomId) button.focus();
+  });
+}
+$('#closeGame').onclick = leave;
+$('#escBtn').onclick = () => {
+  if (!playing || !tStart) return;
+  const t = Date.now() - tStart, best = escaped[playing.id];
+  if (!best || t < best) escaped[playing.id] = t;
+  store.set('escaped', escaped); clearInterval(tInt);
+  $('#escBtn').disabled = true; $('#escBtn').textContent = 'Escaped in ' + fmt(t);
+  render();
+};
+$('#fsBtn').onclick = () => { const p = $('#player'); if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); else if (p.requestFullscreen) p.requestFullscreen().catch(() => {}); };
+
+render();
+</script>
+
+</html>
+
