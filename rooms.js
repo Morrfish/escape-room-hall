@@ -1,6 +1,14 @@
 // Copy a room entry to add another game. Give it a unique id.
 window.escapeRooms = [
   {
+    id: "take-out-the-trash",
+    title: "Take Out the Trash",
+    year: "2026–27",
+    desc: "Explore the stadium after hours, solve the security puzzles, and rescue Deshaun.",
+    cover: "take-out-the-trash-cover.jpg",
+    game: "take-out-the-trash.html"
+  },
+  {
     id: "escape-from-prison",
     title: "Escape From Prison",
     by: "Aiden Diller",
@@ -60,6 +68,7 @@ window.escapeRooms = [
     game: "never-ending-levels.html"
   }
 ];
+
 
 
 
