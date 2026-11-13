@@ -3,6 +3,7 @@ window.escapeRooms = [
   {
     id: "take-out-the-trash",
     title: "Take Out the Trash",
+    by: "Jonathan Herrmann",
     year: "2026–27",
     desc: "Explore the stadium after hours, solve the security puzzles, and rescue Deshaun.",
     cover: "take-out-the-trash-cover.jpg",
@@ -68,6 +69,7 @@ window.escapeRooms = [
     game: "never-ending-levels.html"
   }
 ];
+
 
 
 
