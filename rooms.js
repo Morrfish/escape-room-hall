@@ -41,8 +41,13 @@ window.escapeRooms = [
     year: "2026–27",
     cover: "cluttered-closet-escape-cover.jpg",
     game: "cluttered-closet-escape.html"
+  },
+  {
+    id: "never-ending-levels",
+    title: "The Never-Ending Levels",
+    by: "Daisey Rainsburg",
+    year: "2026–27",
+    cover: "never-ending-levels-cover.jpg",
+    game: "never-ending-levels.html"
   }
 ];
-
-
-

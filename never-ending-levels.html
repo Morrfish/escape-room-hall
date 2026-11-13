@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Never-Ending Levels</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Jost:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#e8e4d8; --panel:#f7f5ee; --ink:#1d1b16; --muted:#5d584b; --line:#cfc8b4; --accent:#a8891f;
+  --paper:#f3ecd2; --paper-ink:#2b2416;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){ --bg:#141310; --panel:#1f1d18; --ink:#ece7d8; --muted:#a9a290; --line:#3a362c; --accent:#d9b84a; color-scheme:dark; }
+}
+:root[data-theme="dark"]{ --bg:#141310; --panel:#1f1d18; --ink:#ece7d8; --muted:#a9a290; --line:#3a362c; --accent:#d9b84a; color-scheme:dark; }
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Jost,system-ui,sans-serif;min-height:100%}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+.hud{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.hud h1{font:400 clamp(1.2rem,3vw,1.7rem)/1.1 "Special Elite",serif;margin:0}
+.hud .sub{color:var(--muted);font-size:.9rem}
+.hud .tools{display:flex;gap:8px;flex-wrap:wrap}
+.btn{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 14px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.count{font-weight:700;font-variant-numeric:tabular-nums}
+
+/* ---------- SCENE ---------- */
+.scene{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:4px;isolation:isolate;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+@media (max-width:640px){.scene{aspect-ratio:4/5}}
+.layer{position:absolute;inset:0;pointer-events:none}
+
+/* L1 sweaty office */
+.lv1{background:#c8b75f}
+.lv1 .wall{top:14%;bottom:30%;background:
+  repeating-linear-gradient(90deg,rgba(110,92,24,.16) 0 2px,transparent 2px 34px),
+  repeating-linear-gradient(45deg,rgba(255,250,200,.07) 0 6px,transparent 6px 17px),
+  repeating-linear-gradient(-45deg,rgba(255,250,200,.07) 0 6px,transparent 6px 17px),#cbb964}
+.lv1 .ceil{bottom:86%;background:
+  linear-gradient(90deg,rgba(90,80,40,.35) 1px,transparent 1px) 0 0/12.5% 100%,
+  linear-gradient(rgba(90,80,40,.35) 1px,transparent 1px) 0 0/100% 50%,#ddd5ad}
+.lv1 .lamp{position:absolute;top:3%;height:4%;width:14%;background:#fffbe6;box-shadow:0 0 40px 10px rgba(255,250,210,.55);border-radius:2px}
+.lv1 .floor{top:70%;background:
+  radial-gradient(ellipse 18% 9% at 22% 40%,rgba(60,50,18,.45),transparent 70%),
+  radial-gradient(ellipse 14% 7% at 70% 70%,rgba(60,50,18,.4),transparent 70%),
+  radial-gradient(ellipse 24% 10% at 50% 15%,rgba(255,255,255,.12),transparent 70%),
+  repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 1px,transparent 1px 4px),#8b7a3d}
+.lv1 .desk{position:absolute;left:14%;width:36%;top:58%;height:5%;background:#6b5a35;border-radius:2px}
+.lv1 .desk::after{content:"";position:absolute;left:4%;right:62%;top:100%;height:260%;background:#5c4d2c}
+.lv1 .monitor{position:absolute;left:37%;width:9%;top:43%;height:15%;background:#2a2a26;border:5px solid #a29a80;border-radius:3px}
+.lv1 .door{position:absolute;left:3%;width:9%;top:30%;height:40%;background:#9f8c48;border:3px solid #7d6c32}
+.flicker{background:#000;opacity:0;animation:flick 7s infinite steps(1)}
+@keyframes flick{0%,100%{opacity:0}61%{opacity:.35}62%{opacity:0}64%{opacity:.5}65%{opacity:0}88%{opacity:.2}89%{opacity:0}}
+
+/* L2 pool rooms */
+.lv2{background:#dfeeed}
+.lv2 .wall{bottom:38%;background:
+  linear-gradient(rgba(110,165,163,.55) 1px,transparent 1px) 0 0/30px 30px,
+  linear-gradient(90deg,rgba(110,165,163,.55) 1px,transparent 1px) 0 0/30px 30px,
+  linear-gradient(#f2f8f6,#d2e6e3)}
+.lv2 .arch{position:absolute;bottom:38%;width:16%;height:38%;border-radius:50% 50% 0 0/30% 30% 0 0;background:linear-gradient(#a9cfcc,#8fbfbb);box-shadow:inset 0 0 0 6px #e8f3f1}
+.lv2 .pool{top:62%;background:
+  linear-gradient(rgba(90,120,70,.25),rgba(40,60,40,.35)),
+  repeating-linear-gradient(100deg,rgba(255,255,255,.08) 0 3px,transparent 3px 22px),
+  linear-gradient(#5fb0b6,#2b6f78)}
+.lv2 .shimmer{top:62%;background:repeating-linear-gradient(80deg,rgba(255,255,255,.12) 0 2px,transparent 2px 40px);animation:shim 6s linear infinite;background-size:200% 100%}
+@keyframes shim{to{background-position:200% 0}}
+.lv2 .edge{position:absolute;top:60%;left:0;right:0;height:3%;background:#eef5f3;border-bottom:3px solid #9cc2bf}
+
+/* L3 heaven labyrinth */
+.lv3{background:#f7f5ee}
+.lv3 .glow{background:radial-gradient(ellipse 60% 55% at 50% 30%,#fff 0,#fbf8ee 40%,#e9e4d4 100%)}
+.lv3 .cols{background:repeating-linear-gradient(90deg,transparent 0 9%,rgba(200,190,160,.28) 9% 10.5%,transparent 10.5% 12.5%)}
+.lv3 .floor{top:72%;background:
+  linear-gradient(90deg,rgba(180,170,140,.3) 1px,transparent 1px) 0 0/10% 100%,
+  linear-gradient(#ece7d8,#d8d1bb)}
+.lv3 .gatearch{position:absolute;left:66%;width:22%;top:34%;height:42%;border:6px solid #c8a14a;border-bottom:0;border-radius:50% 50% 0 0/35% 35% 0 0;
+  background:repeating-linear-gradient(90deg,transparent 0 14%,#c8a14a 14% 17%)}
+.lv3 .angel{position:absolute;width:7%;opacity:.55}
+
+/* L4 dark */
+.lv4{background:#040406}
+.lv4 .fog{background:radial-gradient(ellipse 50% 40% at 50% 60%,rgba(90,50,140,.35),transparent 70%),radial-gradient(ellipse 30% 30% at 80% 20%,rgba(60,30,100,.3),transparent 70%)}
+.lv4 .stairs{background:repeating-linear-gradient(160deg,transparent 0 22px,rgba(120,90,170,.12) 22px 24px);mask-image:linear-gradient(transparent,#000 40%,transparent)}
+.lv4 .fdoor{position:absolute;width:6%;height:16%;border:2px solid rgba(160,120,220,.55);background:rgba(30,18,50,.8);animation:bob 6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px) rotate(1deg)}}
+
+@media (prefers-reduced-motion:reduce){.flicker,.shimmer,.fdoor{animation:none}}
+
+/* hotspots */
+.hot{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:6px;background:none;border:0;padding:6px;z-index:5;color:#fff}
+.hot .ring{width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.45),0 0 12px rgba(255,255,255,.6);display:grid;place-items:center;flex:none;background:rgba(0,0,0,.25)}
+.hot .ring::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
+.hot .lbl{font-size:.78rem;font-weight:500;background:rgba(0,0,0,.65);padding:2px 8px;border-radius:3px;white-space:nowrap;opacity:0;transition:opacity .15s}
+.hot:hover .lbl,.hot:focus-visible .lbl{opacity:1}
+.hot.done .ring{border-color:rgba(255,255,255,.5);box-shadow:none}
+.hot.done .ring::after{content:"✓";width:auto;height:auto;background:none;font-size:12px;line-height:1;color:rgba(255,255,255,.8)}
+.hot.new .ring{animation:pulse 1.6s ease-out 3}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.9)}100%{box-shadow:0 0 0 18px rgba(255,255,255,0)}}
+.hot.right{flex-direction:row-reverse}
+@media (hover:none){.hot .lbl{opacity:1}}
+
+/* below scene */
+.below{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+@media (max-width:760px){.below{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 16px}
+.card h2{font:500 1rem/1.3 Jost,sans-serif;margin:0 0 8px;color:var(--muted)}
+.inv{display:flex;flex-wrap:wrap;gap:8px;min-height:44px}
+.item{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:5px;padding:4px 10px 4px 6px;background:var(--bg);font-size:.9rem}
+.item svg{width:26px;height:26px}
+.empty{color:var(--muted);font-size:.9rem}
+.journal{margin:0;padding:0;list-style:none;max-height:180px;overflow:auto;font:15px/1.55 "Special Elite",serif}
+.journal li{padding:3px 0;border-bottom:1px dashed var(--line)}
+.journal li span{color:var(--muted);font-family:Jost,sans-serif;font-size:.8rem;margin-right:6px}
+
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;place-items:center;z-index:50;padding:16px}
+.ov.show{display:grid}
+.modal{background:var(--panel);color:var(--ink);width:min(560px,100%);max-height:90vh;overflow:auto;border-radius:8px;padding:20px 22px;border:1px solid var(--line)}
+.modal h3{font:400 1.4rem/1.2 "Special Elite",serif;margin:0 0 10px}
+.modal p{margin:0 0 12px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:14px}
+.paper{background:var(--paper);color:var(--paper-ink);font:18px/1.6 "Special Elite",serif;padding:18px 20px;border-radius:2px;box-shadow:2px 3px 0 rgba(0,0,0,.15);transform:rotate(-1deg);margin:6px 0 12px}
+.paper small{display:block;margin-top:8px;font-size:14px;opacity:.85}
+.lockrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lockrow input{font:22px/1 "Special Elite",monospace;letter-spacing:.3em;width:9ch;padding:8px 10px;border:2px solid var(--line);border-radius:5px;background:var(--bg);color:var(--ink);text-align:center}
+.msg{min-height:1.5em;margin-top:8px;color:var(--muted);font-size:.95rem}
+.msg.bad{color:#b3412e}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.grid{display:grid;gap:8px}
+.choice{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:5px;padding:10px;font-size:1.2rem}
+.choice[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:.85rem;text-align:center;background:#fff;color:#222;padding:10px;border-radius:3px}
+.cal b{font-weight:500;color:#777}
+.cal .c{border:2px solid #c0392b;border-radius:50%;color:#c0392b;font-weight:700}
+.screen{background:#0d1a0d;color:#7dff8a;font:15px/1.5 "Special Elite",monospace;padding:14px;border-radius:4px;min-height:110px}
+.wire{border:0;border-radius:4px;padding:10px 16px;color:#fff;font-weight:700}
+.sym{font-size:2.6rem;text-align:center;line-height:1.2}
+.mirror{background:linear-gradient(135deg,#bfc9cc,#e6eef0 40%,#a9b6ba);border-radius:6px;padding:20px;text-align:center;position:relative;overflow:hidden}
+.mirror::before{content:"";position:absolute;inset:0;background:linear-gradient(60deg,transparent 48%,rgba(60,60,60,.55) 49%,transparent 50%),linear-gradient(-30deg,transparent 58%,rgba(60,60,60,.5) 59%,transparent 60%)}
+.mirror .digits{font:700 3.4rem/1 Jost,sans-serif;color:#2c3b40;display:inline-block;transform:scaleX(-1)}
+.verse{font:19px/1.6 "Special Elite",serif;border:3px double #c8a14a;padding:16px;text-align:center;background:#fbf7ea;color:#4a3d1d}
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mgrid button{aspect-ratio:3/4;border:3px solid #c8a14a;border-radius:40px 40px 4px 4px;background:linear-gradient(160deg,#e9eef0,#c4ced2);display:grid;place-items:end center;padding-bottom:10%}
+.fig{width:30%;height:55%;background:#55606a;border-radius:40% 40% 10% 10%;opacity:.7}
+.doors{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.doors button{aspect-ratio:1/2;background:#24163a;border:2px solid #8a64c8;color:#d8c8f3;border-radius:3px;font:1.1rem "Special Elite",serif}
+
+/* full-screen story overlays */
+.story{position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:24px;text-align:center;color:#f1ead6;background:#000}
+.story.show{display:grid}
+.story .inner{max-width:640px}
+.story h2{font:400 clamp(1.8rem,5vw,3rem)/1.1 "Special Elite",serif;margin:0 0 6px}
+.story .lvl{font-size:.95rem;opacity:.7;margin-bottom:16px}
+.story p{font:18px/1.7 "Special Elite",serif;margin:0 0 20px}
+.story .btn{background:transparent;color:#f1ead6;border-color:rgba(241,234,214,.5)}
+.story .keyart{width:min(280px,70vw);margin:0 auto 10px;display:block}
+.story.s1{background:radial-gradient(#4b4320,#14120a)}
+.story.s2{background:radial-gradient(#1f4c52,#071618)}
+.story.s3{background:radial-gradient(#fffef8,#e8e1c8);color:#3b3220}
+.story.s3 .btn{color:#3b3220;border-color:#3b3220}
+.story.s4{background:radial-gradient(#25163a,#000)}
+.story.wallpaper{background:repeating-linear-gradient(90deg,rgba(110,92,24,.16) 0 2px,transparent 2px 34px),#cbb964;color:#2b2410}
+.story.wallpaper .btn{color:#2b2410;border-color:#2b2410}
+.fadein{animation:fi 1.2s ease both}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.keyspin{animation:kin 1.4s cubic-bezier(.2,.8,.2,1) both}
+@keyframes kin{from{opacity:0;transform:translateY(30px) rotate(-25deg) scale(.7)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.fadein,.keyspin{animation:none}}
+.footer{margin-top:14px;color:var(--muted);font-size:.85rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hud">
+    <div>
+      <h1 id="lvTitle">The Never-Ending Levels</h1>
+      <div class="sub" id="lvSub"></div>
+    </div>
+    <div class="tools">
+      <span class="btn" aria-live="polite">Clues <span class="count" id="count">0/8</span></span>
+      <button class="btn" id="hintBtn">Hint</button>
+      <button class="btn" id="soundBtn" aria-pressed="false">Sound off</button>
+    </div>
+  </div>
+  <div class="scene" id="scene"></div>
+  <div class="below">
+    <div class="card"><h2>Inventory</h2><div class="inv" id="inv"></div></div>
+    <div class="card"><h2>Notebook</h2><ul class="journal" id="journal"></ul></div>
+  </div>
+  <div class="footer"><span id="loopTxt"></span><button class="btn" id="resetBtn">Start over</button></div>
+</div>
+
+<div class="ov" id="ov"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" id="modal"></div></div>
+<div class="story" id="story"><div class="inner" id="storyInner"></div></div>
+
+<script>
+/* ================= STATE ================= */
+const SAVE='nel-save-v1';
+let S;
+function fresh(loop){return {level:0,loop:loop||1,flags:{},inv:[],clues:{},journal:[]};}
+try{S=JSON.parse(localStorage.getItem(SAVE))||null}catch(e){S=null}
+const started=!!S;
+if(!S)S=fresh(1);
+function save(){try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(e){}}
+const has=i=>S.inv.includes(i);
+const F=f=>!!S.flags[f];
+function give(i){if(!has(i))S.inv.push(i);renderInv();save();}
+function take(i){S.inv=S.inv.filter(x=>x!==i);renderInv();save();}
+function setF(f){S.flags[f]=true;save();}
+function solved(n){return !!S.clues[S.level+'-'+n];}
+function solve(n,note){const k=S.level+'-'+n;if(!S.clues[k]){S.clues[k]=1;if(note)S.journal.push({l:S.level,t:note});save();}renderHUD();}
+function note(t){S.journal.push({l:S.level,t});save();renderJournal();}
+
+/* ================= SOUND ================= */
+let AC=null,soundOn=false,amb=[];
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC;}
+function tone(f,d,type,vol,slide){if(!soundOn||!ac())return;const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(vol||.15,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d);}
+const sfx={
+  click:()=>tone(600,.06,'triangle',.08),
+  bad:()=>{tone(140,.25,'square',.08);},
+  good:()=>{tone(520,.12,'triangle',.12);setTimeout(()=>tone(780,.18,'triangle',.12),110);},
+  drip:()=>tone(1400,.18,'sine',.18,500),
+  key:()=>[660,880,990,1320].forEach((f,i)=>setTimeout(()=>tone(f,.5,'triangle',.1),i*120)),
+  creak:()=>tone(90,1.4,'sawtooth',.07,55),
+  whisper:()=>{if(!soundOn||!ac())return;const b=AC.createBuffer(1,AC.sampleRate*.7,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.sin(Math.PI*i/d.length);const s=AC.createBufferSource(),fl=AC.createBiquadFilter(),g=AC.createGain();fl.type='bandpass';fl.frequency.value=2500;g.gain.value=.25;s.buffer=b;s.connect(fl).connect(g).connect(AC.destination);s.start();}
+};
+const AMB=[[[60,'sawtooth',.012],[120,'sine',.02]],[[55,'sine',.04],[82,'sine',.02]],[[220,'sine',.015],[277,'sine',.012],[330,'sine',.012]],[[41,'sine',.05],[43.5,'sine',.04]]];
+function ambience(){amb.forEach(n=>{try{n.stop()}catch(e){}});amb=[];if(!soundOn||!ac())return;(AMB[S.level]||[]).forEach(([f,t,v])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=t;o.frequency.value=f;g.gain.value=v;o.connect(g).connect(AC.destination);o.start();amb.push(o);});}
+document.getElementById('soundBtn').onclick=e=>{soundOn=!soundOn;ac();if(AC&&AC.state==='suspended')AC.resume();e.currentTarget.textContent=soundOn?'Sound on':'Sound off';e.currentTarget.setAttribute('aria-pressed',soundOn);ambience();};
+
+/* ================= ITEMS ================= */
+function keySVG(c,stroke){return `<svg viewBox="0 0 120 50" aria-hidden="true"><defs><linearGradient id="g${c.replace('#','')}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="${c}"/><stop offset="1" stop-color="${c}" stop-opacity=".8"/></linearGradient></defs><g fill="url(#g${c.replace('#','')})" stroke="${stroke||'rgba(0,0,0,.45)'}" stroke-width="2"><circle cx="22" cy="25" r="17"/><rect x="36" y="20" width="74" height="10" rx="2"/><rect x="88" y="30" width="7" height="12"/><rect x="100" y="30" width="7" height="9"/></g><circle cx="22" cy="25" r="7" fill="#000" fill-opacity=".55"/></svg>`;}
+const ITEMS={
+  silver:{n:'Small silver key',svg:keySVG('#c9ced3')},
+  symbols:{n:'Symbol sheet',svg:`<svg viewBox="0 0 30 30"><rect x="4" y="3" width="22" height="24" fill="#f3ecd2" stroke="#7a6a40"/><text x="15" y="19" font-size="11" text-anchor="middle" fill="#333">○□</text></svg>`},
+  brass:{n:'Brass key',svg:keySVG('#c49a3a')},
+  feather:{n:'White feather',svg:`<svg viewBox="0 0 30 30"><path d="M6 26 C10 14 16 6 26 4 C24 14 18 22 6 26Z" fill="#fff" stroke="#999"/><path d="M6 26 L22 8" stroke="#999"/></svg>`},
+  yellow:{n:'Yellow key',svg:keySVG('#e3c22b')},
+  blue:{n:'Blue key',svg:keySVG('#3d7fd1')},
+  white:{n:'White key',svg:keySVG('#f4f1e6','rgba(120,100,50,.6)')},
+  purple:{n:'Purple key',svg:keySVG('#8a4fd0')},
+  black:{n:'Black key',svg:keySVG('#1a1a1a','#666')}
+};
+const KEYCOLOR={yellow:'#e3c22b',blue:'#3d7fd1',white:'#f4f1e6',purple:'#8a4fd0',black:'#1a1a1a'};
+
+/* ================= MODAL ================= */
+const ov=document.getElementById('ov'),M=document.getElementById('modal');
+let lastFocus=null;
+function modal(title,html,opts={}){
+  lastFocus=document.activeElement;
+  M.innerHTML=`<h3 id="mTitle">${title}</h3><div class="mb">${html}</div><div class="actions">${(opts.actions||[]).map((a,i)=>`<button class="btn ${a.primary?'primary':''}" data-a="${i}">${a.label}</button>`).join('')}<button class="btn" data-close>Close</button></div>`;
+  ov.classList.add('show');
+  M.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{sfx.click();opts.actions[+b.dataset.a].fn();});
+  M.querySelector('[data-close]').onclick=close;
+  if(opts.mount)opts.mount(M);
+  const f=M.querySelector('input,[data-a],.choice,.wire')||M.querySelector('[data-close]');f&&f.focus();
+}
+function close(){ov.classList.remove('show');renderScene();if(lastFocus&&document.body.contains(lastFocus))lastFocus.focus();}
+ov.addEventListener('click',e=>{if(e.target===ov)close();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ov.classList.contains('show'))close();});
+
+function lockHTML(len,label){return `<p>${label}</p><form class="lockrow" data-lock><input inputmode="numeric" autocomplete="off" maxlength="${len}" aria-label="${label}" placeholder="${'•'.repeat(len)}"><button class="btn primary" type="submit">Try code</button></form><div class="msg" aria-live="polite"></div>`;}
+function bindLock(root,answer,ok,badMsg){
+  const f=root.querySelector('[data-lock]'),inp=f.querySelector('input'),msg=root.querySelector('.msg');
+  f.onsubmit=e=>{e.preventDefault();const v=inp.value.replace(/\s/g,'').toUpperCase();
+    if(v===answer){sfx.good();ok();}
+    else{sfx.bad();msg.textContent=badMsg||'Nothing happens. That’s not the code.';msg.className='msg bad';inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');inp.select();}};
+}
+
+/* ================= STORY OVERLAYS ================= */
+const ST=document.getElementById('story'),SI=document.getElementById('storyInner');
+function story(cls,html,btn,fn){ST.className='story show '+cls;SI.innerHTML=html+(btn?`<button class="btn fadein" id="stBtn" style="animation-delay:.6s">${btn}</button>`:'');SI.classList.remove('fadein');void SI.offsetWidth;SI.classList.add('fadein');if(btn){const b=document.getElementById('stBtn');b.focus();b.onclick=()=>{sfx.click();fn();};}}
+function hideStory(){ST.className='story';}
+function keyReveal(k,title,text,btn,next){
+  sfx.key();give(k);
+  story('s'+(S.level+1),`<div class="keyart keyspin">${keySVG(KEYCOLOR[k],k==='black'?'#777':undefined)}</div><h2>${title}</h2><p>${text}</p>`,btn,next);
+}
+function levelIntro(){
+  const L=LEVELS[S.level];
+  story('s'+(S.level+1),`<div class="lvl">Level ${S.level+1} of 4</div><h2>${L.name}</h2><p>${L.intro}</p>`,'Look around',()=>{hideStory();renderAll();});
+}
+function nextLevel(){S.level++;save();ambience();levelIntro();}
+
+/* ================= LEVELS ================= */
+const LEVELS=[
+/* ---------- LEVEL 1 ---------- */
+{name:'The Sweaty Office',goal:'Find the yellow key.',
+ intro:'You wake up in an empty office. The floor is wet, the air smells disgusting, and yellow wallpaper covers every wall. The lights flicker. It feels like someone left in a hurry. You must find the yellow key to escape.',
+ deco:`<div class="layer wall"></div><div class="layer ceil"></div><div class="lamp" style="left:18%"></div><div class="lamp" style="left:58%"></div><div class="layer floor"></div><div class="door"></div><div class="desk"></div><div class="monitor"></div><div class="layer flicker"></div>`,
+ spots:[
+  {id:'note',clue:1,x:20,y:56,label:'Note on the desk',hint:'Start with the note on the desk. Write down what it says.',
+   open(){modal('A note on the desk',`<div class="paper">If you need me, call <b>555-0193</b>.<br>— M.<small>p.s. this number isn’t real. The last four digits are my computer password.</small></div>`);solve(1,'Desk note: 555-0193. Last four digits = computer password.');}},
+  {id:'calendar',clue:2,x:62,y:30,label:'Wall calendar',hint:'Check the calendar. A circled date can turn into a number code.',
+   open(){let d='';['S','M','T','W','T','F','S'].forEach(x=>d+=`<b>${x}</b>`);for(let i=0;i<0;i++)d+='<span></span>';for(let i=1;i<=31;i++)d+=`<span class="${i===18?'c':''}">${i}</span>`;
+    modal('Calendar: March',`<div class="cal">${d}</div><p style="margin-top:10px">Someone circled the 18th in red marker. Tiny letters under it say <i>“bottom drawer.”</i></p>`);solve(2,'Calendar: March 18 is circled. “bottom drawer.”');}},
+  {id:'tile',clue:3,x:74,y:9,label:'Sagging ceiling tile',hint:'One of the ceiling tiles is sagging. Push it.',
+   open(){if(has('silver')||F('ventOpen')){modal('Ceiling tile','Just soggy insulation now.');return;}
+    modal('A sagging ceiling tile','<p>It’s soaked through and bowing down. You could push it up.</p>',{actions:[{label:'Push the tile',primary:true,fn(){give('silver');solve(3,'Ceiling tile: found a small silver key.');modal('Something falls','<p>Dirty water splashes down, and a <b>small silver key</b> drops at your feet.</p>');}}]});}},
+  {id:'cup',clue:4,x:31,y:52,label:'Coffee cup',hint:'Look closely at the coffee cup. Where do the fingerprints lead?',
+   open(){modal('A cold coffee cup','<p>Greasy fingerprints wrap around the cup, then smear down the side of the desk, straight toward the <b>bottom drawer</b>.</p>');solve(4,'Cup: fingerprints lead to the bottom desk drawer.');}},
+  {id:'drawer',x:21,y:78,label:'Bottom desk drawer',hint:'The bottom drawer has a 3-number lock. Use the calendar: month, then day.',
+   done:()=>has('symbols')||F('drawerOpen'),
+   open(){if(F('drawerOpen')){modal('Bottom drawer','<p>Empty, except for a sticky ring where the sheet was.</p>');return;}
+    modal('The bottom drawer',lockHTML(3,'A three-number lock. Someone scratched “month, then day” on it.'),{mount:r=>bindLock(r,'318',()=>{setF('drawerOpen');give('symbols');note('Symbol sheet: ○ = 7, □ = 2, △ = 4, ✕ = 9');modal('The drawer slides open',`<div class="paper" style="font-size:22px">○ = 7 &nbsp; □ = 2<br>△ = 4 &nbsp; ✕ = 9</div><p>A sheet of strange symbols, each with a number. You take it.</p>`);})});}},
+  {id:'wall',clue:5,x:85,y:44,label:'Strange wallpaper',right:true,hint:'Look at the wallpaper. The symbols there match your symbol sheet.',
+   open(){modal('The wallpaper',`<p>Under the stains, four faint marks are drawn in a row, left to right:</p><div class="sym" style="letter-spacing:.4em">□ ✕ ○ △</div><p>${has('symbols')?'They match the symbols on your sheet.':'They look like they mean something. Maybe there’s a key to them somewhere.'}</p>`);solve(5,'Wallpaper symbols, left to right: □ ✕ ○ △');}},
+  {id:'vent',clue:6,x:90,y:20,label:'Wall vent',right:true,hint:'The vent is padlocked. Something small from the ceiling might open it.',
+   open(){if(F('ventOpen')){modal('The vent',`<div class="paper">SYSTEM REBOOT<br>Connect wires in this order:<br><b>RED → YELLOW → BLUE</b></div>`);return;}
+    if(!has('silver')){modal('A wall vent','<p>The grate is loose, but a tiny padlock holds it shut. The keyhole is very small.</p>');return;}
+    modal('A wall vent','<p>The tiny padlock looks like it fits your silver key.</p>',{actions:[{label:'Use silver key',primary:true,fn(){take('silver');setF('ventOpen');solve(6,'Vent printout: reboot wires RED → YELLOW → BLUE.');sfx.creak();modal('The grate swings open',`<div class="paper">SYSTEM REBOOT<br>Connect wires in this order:<br><b>RED → YELLOW → BLUE</b></div><p>A crumpled printout was stuffed inside.</p>`);}}]});}},
+  {id:'pc',clue:7,x:41,y:40,label:'Broken computer',hint:'The computer needs the last four digits from the desk note, then the wire order from the vent.',
+   open(){if(F('pcFixed')){modal('The computer',`<div class="screen">POWER RESTORED.<br>BASEMENT PUMP: OFFLINE.<br><br>&gt; listen.</div>`);return;}
+    if(!F('pcLogin')){modal('A broken computer',`<div class="screen">MORRISON &amp; CO. TERMINAL<br>ENTER PASSWORD_</div>`+lockHTML(4,'Four-digit password'),{mount:r=>bindLock(r,'0193',()=>{setF('pcLogin');LEVELS[0].spots.find(s=>s.id==='pc').open();},'ACCESS DENIED.')});return;}
+    let seq=[];const order=['red','yellow','blue'];
+    modal('The computer',`<div class="screen" id="scr">ACCESS GRANTED.<br>ERROR: POWER LOOP OPEN.<br>RECONNECT WIRES_</div><p style="margin-top:12px">Three loose wires hang out the back.</p><div class="lockrow" id="wires"><button class="wire" style="background:#2f6fbf" data-w="blue">Blue</button><button class="wire" style="background:#b8322a" data-w="red">Red</button><button class="wire" style="background:#c9a313;color:#222" data-w="yellow">Yellow</button></div><div class="msg" aria-live="polite"></div>`,{mount(r){
+      r.querySelectorAll('.wire').forEach(b=>b.onclick=()=>{const w=b.dataset.w;const msg=r.querySelector('.msg');
+        if(w===order[seq.length]){seq.push(w);sfx.click();b.disabled=true;b.style.opacity=.45;msg.className='msg';msg.textContent=`Connected: ${seq.join(' → ')}`;
+          if(seq.length===3){sfx.good();setF('pcFixed');solve(7,'Computer fixed. Now you can hear dripping somewhere.');r.querySelector('#scr').innerHTML='POWER RESTORED.<br>BASEMENT PUMP: OFFLINE.<br><br>&gt; listen.';msg.textContent='The hum stops. In the quiet, you hear water dripping.';setTimeout(sfx.drip,600);}}
+        else{sfx.bad();seq=[];r.querySelectorAll('.wire').forEach(x=>{x.disabled=false;x.style.opacity=1});msg.className='msg bad';msg.textContent='Sparks! The wires pop loose. Start over.';}});}});}},
+  {id:'drip',clue:8,x:7,y:48,label:'Dripping sound',show:()=>F('pcFixed'),hint:'Follow the dripping to the door. Translate the wallpaper symbols with your sheet.',
+   open(){sfx.drip();modal('Drip… drip…',lockHTML(4,'The sound leads to a door marked COPY ROOM. It has a four-digit keypad. Someone drew a tiny ○ on the frame.'),{mount:r=>bindLock(r,'2974',()=>{close();solve(8,'Copy room door: 2974. Found the yellow key.');
+     keyReveal('yellow','The yellow key','Water drips from the ceiling onto a yellow key sitting in a puddle. It opens the office exit.','Unlock the office exit',nextLevel);})});}}
+ ]},
+
+/* ---------- LEVEL 2 ---------- */
+{name:'The Never-Ending Pool Room',goal:'Find the blue key.',
+ intro:'You enter a huge indoor pool room. The water is cold and dirty, the tiles are slimy, and the ceiling lights buzz. Every hallway looks the same, and the pool seems to go on forever. You must find the blue key.',
+ deco:`<div class="layer wall"></div><div class="arch" style="left:20%"></div><div class="arch" style="left:44%"></div><div class="arch" style="left:68%"></div><div class="edge"></div><div class="layer pool"></div><div class="layer shimmer"></div>`,
+ spots:[
+  {id:'riddle',clue:3,x:56,y:80,label:'Note floating in the water',hint:'Read the floating note. Spell the number out and remove one letter.',
+   open(){modal('A soggy note',`<div class="paper">I am an odd number.<br>Take away one letter<br>and I become even.<br><br><b>Open me.</b></div>`);solve(3,'Floating riddle: “I am an odd number. Take away one letter and I become even. Open me.”');}},
+  {id:'lockers',clue:1,x:11,y:42,label:'Row of lockers',hint:'The riddle’s answer is a locker number. Seven minus the S is “even.”',
+   open(){if(solved(1)){modal('Locker 7',`<div class="paper">DEEP END DOOR<br><b>4 1 _ _</b><br><small>the mirror knows the rest</small></div>`);return;}
+    let h='<p>Nine rusty lockers. Only one isn’t rusted shut.</p><div class="grid" style="grid-template-columns:repeat(5,1fr)">';for(let i=1;i<=9;i++)h+=`<button class="choice" data-l="${i}">${i}</button>`;h+='</div><div class="msg" aria-live="polite"></div>';
+    modal('The lockers',h,{mount(r){r.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{if(b.dataset.l==='7'){sfx.creak();solve(1,'Locker 7: DEEP END DOOR 4 1 _ _ (the mirror knows the rest)');LEVELS[1].spots[1].open();}else{sfx.bad();const m=r.querySelector('.msg');m.className='msg bad';m.textContent=`Locker ${b.dataset.l} is rusted shut.`;}});}});}},
+  {id:'drain',clue:2,x:40,y:93,label:'Drain cover',hint:'Lift the drain cover at the edge of the pool.',
+   open(){if(solved(2)){modal('The drain','<p>Scratched into the metal: <b style="font-size:1.4rem">806</b></p>');return;}
+    modal('A drain cover','<p>Slimy and heavy. It might lift.</p>',{actions:[{label:'Lift it',primary:true,fn(){sfx.click();solve(2,'Under the drain cover: 806');modal('Under the drain','<p>Someone scratched a number underneath: <b style="font-size:1.4rem">806</b></p>');}}]});}},
+  {id:'hand',clue:4,x:74,y:30,label:'Wet handprint',hint:'Follow where the handprint points.',
+   open(){modal('A wet handprint','<p>A handprint on the tile, still wet. The fingers point up and to the right, toward a <b>vent</b> near the hallway ceiling, beyond the deep end.</p>');setF('handSeen');solve(4,'Handprint points to a hidden vent past the deep end.');}},
+  {id:'ring',clue:5,x:27,y:34,label:'Life preserver',hint:'Check inside the life preserver.',
+   open(){if(solved(5)){modal('Life preserver','<p>Just an old ring now.</p>');return;}
+    give('brass');solve(5,'Life preserver: brass key taped inside.');modal('A life preserver','<p>Peeling tape on the inside holds a <b>brass key</b>. You pull it free.</p>');}},
+  {id:'mirror',clue:6,x:62,y:44,label:'Broken mirror',hint:'The mirror numbers are backward. Read them the way a mirror would: 93.',
+   open(){modal('A broken mirror','<div class="mirror"><span class="digits">93</span></div><p style="margin-top:12px">Cracked glass. The numbers look wrong, like they need to be read backward.</p>');solve(6,'Broken mirror: numbers that must be read backward.');}},
+  {id:'deep',clue:7,x:89,y:52,label:'Door at the deep end',right:true,hint:'The deep-end door code is the locker’s 41 plus the mirror number read backward.',
+   open(){if(F('deepOpen')){modal('Deep-end door','<p>It hangs open. A hallway that looks exactly like the last one.</p>');return;}
+    sfx.creak();modal('A door at the deep end',lockHTML(4,'Something knocks from the other side. Then silence. A keypad glows on the frame.'),{mount:r=>bindLock(r,'4193',()=>{setF('deepOpen');solve(7,'Deep-end door opened: 4193.');modal('The door opens','<p>Nobody’s there. Just another hallway, a sign, and the smell of chlorine.</p>');})});}},
+  {id:'sign',x:85,y:18,label:'Hallway sign',right:true,show:()=>F('deepOpen'),done:()=>F('signSeen'),hint:'The sign points to maintenance, but the door is rusted. Find another way in.',
+   open(){setF('signSeen');modal('A sign','<div class="paper" style="text-align:center;font-size:22px">MAINTENANCE →</div><p>You follow it to a door that’s rusted solid. There has to be another way in.</p>');}},
+  {id:'vent2',clue:8,x:72,y:9,label:'Hidden vent',show:()=>F('deepOpen')&&F('handSeen'),hint:'The vent padlock uses the number under the drain. The cabinet inside needs the brass key.',
+   open(){
+    if(F('ventIn')){
+      if(has('brass'))modal('Maintenance room','<p>You’re inside. A metal cabinet has a small brass lock.</p>',{actions:[{label:'Use brass key',primary:true,fn(){take('brass');close();solve(8,'Maintenance room cabinet: the blue key.');keyReveal('blue','The blue key','Behind pipes and old chlorine buckets sits a blue key. It opens the locked door out of the pool rooms.','Unlock the pool room exit',nextLevel);}}]});
+      else modal('Maintenance room','<p>A metal cabinet with a small brass lock. You need a key for it.</p>');return;}
+    modal('A hidden vent',lockHTML(3,'Exactly where the handprint pointed. A three-number padlock holds it shut.'),{mount:r=>bindLock(r,'806',()=>{setF('ventIn');sfx.creak();LEVELS[1].spots.find(s=>s.id==='vent2').open();})});}}
+ ]},
+
+/* ---------- LEVEL 3 ---------- */
+{name:'The Heaven Labyrinth',goal:'Find the white key.',
+ intro:'You wake up in a bright white maze that looks like Heaven. Golden gates, marble walls, and angels watching you. They look beautiful from far away, but up close they look terrifying. You keep walking, but the exit never gets closer.',
+ deco:`<div class="layer glow"></div><div class="layer cols"></div><div class="layer floor"></div><div class="gatearch"></div>
+  <svg class="angel" style="left:6%;top:16%" viewBox="0 0 60 80"><path d="M30 10a7 7 0 1 1 0 .1M22 24h16l6 50H16z M22 26C8 20 2 36 4 52c8-10 14-14 18-16M38 26c14-6 20 10 18 26-8-10-14-14-18-16" fill="#cfc7ae"/></svg>
+  <svg class="angel" style="left:88%;top:12%" viewBox="0 0 60 80"><path d="M30 10a7 7 0 1 1 0 .1M22 24h16l6 50H16z M22 26C8 20 2 36 4 52c8-10 14-14 18-16M38 26c14-6 20 10 18 26-8-10-14-14-18-16" fill="#cfc7ae"/></svg>`,
+ spots:[
+  {id:'statue',clue:1,x:14,y:62,label:'Statue',hint:'Look at the statue’s base and remember its symbol.',
+   open(){modal('A marble statue','<p>Carved into its base:</p><div class="sym" style="color:#b48a2c">☉</div>');solve(1,'Statue base symbol: ☉');}},
+  {id:'ladder',clue:6,x:86,y:40,label:'Ladder',right:true,hint:'Climb the ladder. It loops back, but you won’t come down empty-handed.',
+   open(){if(solved(6)){modal('The ladder','<p>Up is just another way back to the start.</p>');return;}
+    modal('A ladder','<p>It goes up and up, into the light.</p>',{actions:[{label:'Climb',primary:true,fn(){give('feather');solve(6,'Ladder: climbed to the top, ended back in the maze. Found a white feather.');modal('Back where you started','<p>You climb for what feels like an hour. At the top, you step off… onto the same marble floor you started on. Caught on the last rung is a single <b>white feather</b>.</p>');}}]});}},
+  {id:'angel',clue:2,x:34,y:38,label:'Angel statue',hint:'The angel is missing a feather. You may have one.',
+   open(){if(F('angelDone')){modal('The angel','<p>Its head stays turned toward the floor, where a wing lies broken.</p>');return;}
+    if(!has('feather')){modal('An angel statue','<p>One feather is missing from its left wing. Its eyes are closed. Up close, its face is too smooth, like it’s holding very still.</p>');return;}
+    modal('An angel statue','<p>There’s a gap in its wing exactly the shape of your feather.</p>',{actions:[{label:'Place the feather',primary:true,fn(){take('feather');setF('angelDone');solve(2,'Angel: placed the feather. It turned to look at a broken wing.');sfx.whisper();modal('Its eyes open','<p>Slowly, the angel’s stone head turns. It’s looking at something on the floor: a <b>broken wing</b>.</p>');}}]});}},
+  {id:'wing',clue:4,x:47,y:86,label:'Broken wing',show:()=>F('angelDone'),hint:'Note the mark on the broken wing. You’ll need it later.',
+   open(){setF('wingSeen');modal('A broken angel wing',`<p>It points like an arrow toward a gap in the marble wall: a hidden passage. Etched into the stone feathers is a mark:</p><div class="sym" style="color:#7a5bbd">⟁</div>`);solve(4,'Broken wing: points to a hidden passage. Marked with ⟁');}},
+  {id:'mirrors',clue:5,x:62,y:58,label:'Hall of mirrors',show:()=>F('wingSeen'),hint:'In the hall of mirrors, the real path is the mirror that doesn’t show you.',
+   open(){if(F('mirrorsDone')){modal('Hall of mirrors','<p>You know the way through now.</p>');return;}
+    const real=4;let h='<p>The passage opens into a room of mirrors. Your reflection is in every one of them. Almost.</p><div class="mgrid">';for(let i=0;i<6;i++)h+=`<button data-m="${i}" aria-label="Mirror ${i+1}">${i===real?'':'<div class="fig"></div>'}</button>`;h+='</div><div class="msg" aria-live="polite"></div>';
+    modal('Hall of mirrors',h,{mount(r){r.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{if(+b.dataset.m===real){sfx.good();setF('mirrorsDone');solve(5,'Mirrors: the real path was the mirror with no reflection.');modal('You walk through the glass','<p>There was never any glass there. On the other side, a tall door with words carved over it.</p>');}else{sfx.bad();const m=r.querySelector('.msg');m.className='msg bad';m.textContent='You walk straight into glass. Your reflection doesn’t flinch.';}});}});}},
+  {id:'verse',clue:3,x:50,y:26,label:'Inscribed door',show:()=>F('mirrorsDone'),hint:'The verse reference has the code: Genesis 28:12.',
+   open(){modal('A carved door',`<div class="verse">“And he dreamed, and behold a ladder set up on the earth, and the top of it reached to heaven: and behold the angels of God ascending and descending on it.”<br><br>Genesis 28:12</div>`,{actions:F('verseOpen')?[]:[{label:'Push the door',primary:true,fn(){setF('verseOpen');sfx.creak();close();}}]});solve(3,'Door verse: Genesis 28:12');}},
+  {id:'voice',clue:7,x:24,y:22,label:'A gentle voice',show:()=>F('verseOpen'),hint:'Follow the voice. It lies, but the dead end has a message.',
+   open(){sfx.whisper();modal('A voice','<p><i>“Trust me,”</i> it says. Warm. Kind. <i>“The way out is this way.”</i></p>',{actions:[{label:'Follow the voice',primary:true,fn(){solve(7,'Voice led to a dead end. Carved: “The gate asks for the first stone you saw, and the verse.”');modal('Dead end','<p>The voice stops. A blank marble wall. Scratched into it, by many hands:</p><div class="paper">The gate asks for the first stone you saw, and the verse.</div>');}}]});}},
+  {id:'gate',clue:8,x:77,y:72,label:'Golden gate',right:true,show:()=>F('verseOpen'),hint:'The gate needs the statue symbol (☉) and the verse numbers (2812).',
+   open(){const syms=['✶','☽','☉','⟁','◇','✚'];let pick=null;
+    let h=`<p>A golden gate. Behind the bars, something white glints. The lock has a symbol dial and four number wheels.</p><div class="grid" style="grid-template-columns:repeat(6,1fr)">${syms.map(s=>`<button class="choice" data-s="${s}" aria-pressed="false">${s}</button>`).join('')}</div><form class="lockrow" data-g style="margin-top:12px"><input inputmode="numeric" maxlength="4" placeholder="••••" aria-label="Four numbers"><button class="btn primary">Open gate</button></form><div class="msg" aria-live="polite"></div>`;
+    modal('The golden gate',h,{mount(r){r.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{sfx.click();pick=b.dataset.s;r.querySelectorAll('[data-s]').forEach(x=>x.setAttribute('aria-pressed',x===b));});
+      r.querySelector('[data-g]').onsubmit=e=>{e.preventDefault();const v=r.querySelector('[data-g] input').value.trim();const m=r.querySelector('.msg');
+        if(pick==='☉'&&v==='2812'){sfx.good();close();solve(8,'Golden gate: ☉ + 2812. The white key.');keyReveal('white','The white key','The gate swings open. You pick up the white key and step through. The light gets brighter… and brighter… until it isn’t light anymore.','Keep going',nextLevel);}
+        else{sfx.bad();m.className='msg bad';m.textContent=!pick?'Pick a symbol on the dial first.':'The gate doesn’t move. Somewhere, an angel laughs.';}};}});}}
+ ]},
+
+/* ---------- LEVEL 4 ---------- */
+{name:'You Died, But You Don’t Know It',goal:'Find the way through the last door.',
+ intro:'Everything goes black. You wake up in a dark place full of floating doors and endless stairs. You hear voices, but you can’t see anyone. You think you’re still trying to escape.',
+ deco:`<div class="layer fog"></div><div class="layer stairs"></div>
+  <div class="fdoor" style="left:8%;top:12%"></div><div class="fdoor" style="left:34%;top:8%;animation-delay:-2s"></div><div class="fdoor" style="left:76%;top:18%;animation-delay:-4s"></div><div class="fdoor" style="left:58%;top:62%;animation-delay:-1s"></div><div class="fdoor" style="left:14%;top:70%;animation-delay:-3s"></div>`,
+ spots:[
+  {id:'mirror',clue:1,x:19,y:44,label:'Mirror',hint:'Try waving at the mirror.',
+   open(){modal('A mirror','<div class="mirror" style="height:140px;background:linear-gradient(135deg,#2a2b33,#4b4d5a 45%,#1d1e24)"></div><p style="margin-top:12px">Your reflection looks tired.</p>',{actions:[{label:'Wave',primary:true,fn(){sfx.whisper();solve(1,'Mirror: my reflection didn’t move with me. It wrote: YOU NEVER LEFT THE MAZE.');modal('A mirror','<p>You wave. Your reflection doesn’t.</p><p>It lifts one finger and writes in the fog on the glass:</p><div class="paper">YOU NEVER LEFT THE MAZE</div>');}}]});}},
+  {id:'note',clue:2,x:40,y:82,label:'A note',hint:'Read the note on the floor.',
+   open(){modal('A note on the stairs','<div class="paper" style="text-align:center;font-size:22px">You are not alive.</div><p>It’s your handwriting. You don’t remember writing it. That doesn’t make sense.</p>');solve(2,'Note in my own handwriting: “You are not alive.”');}},
+  {id:'voices',clue:3,x:88,y:48,label:'Locked door',right:true,hint:'Listen at the locked door.',
+   open(){modal('A locked door','<p>It won’t open. People are talking on the other side.</p>',{actions:[{label:'Listen',primary:true,fn(){sfx.whisper();solve(3,'Voices behind the door: “…went into the maze and never came out…”');modal('You press your ear to the door','<p><i>“…it’s been so quiet since…”</i></p><p><i>“…went into that maze and never came out…”</i></p><p><i>“…do you think they know?”</i></p><p>You knock. Nobody answers.</p>');}}]});}},
+  {id:'glyph',clue:4,x:62,y:24,label:'Glowing symbol',hint:'The glowing symbol matches the one on the broken angel wing. Check your notebook.',
+   open(){if(has('purple')||F('final')){modal('Glowing symbol','<div class="sym" style="color:#a57ce8;text-shadow:0 0 18px #8a4fd0">⟁</div><p>It hums quietly.</p>');return;}
+    const syms=['☉','✶','⟁','☽','◇','✚'];
+    modal('A glowing wall',`<p>Six symbols are carved into the dark. Only one should glow. You’ve seen it before.</p><div class="grid" style="grid-template-columns:repeat(6,1fr)">${syms.map(s=>`<button class="choice" data-s="${s}">${s}</button>`).join('')}</div><div class="msg" aria-live="polite"></div>`,{mount(r){r.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{if(b.dataset.s==='⟁'){solve(4,'Glowing symbol ⟁ matched the angel’s wing. Got the purple key.');close();sfx.key();give('purple');modal('The symbol glows','<p>The ⟁ lights up purple, the same mark from the angel’s wing. The stone cracks open, and a <b>purple key</b> slides out.</p>');}else{sfx.bad();const m=r.querySelector('.msg');m.className='msg bad';m.textContent='Nothing. The symbol stays dark.';}});}});}},
+  {id:'whisper',clue:5,x:50,y:52,label:'A whisper',show:()=>solved(4),hint:'Listen to the whisper.',
+   open(){sfx.whisper();setF('goOpen');solve(5,'A voice whispered “Go,” and a door opened.');modal('A whisper','<p>Right next to your ear, so close you feel it:</p><div class="paper" style="text-align:center;font-size:24px">“Go.”</div><p>Somewhere behind you, a door creaks open.</p>');sfx.creak();}},
+  {id:'cup',clue:6,x:29,y:64,label:'Something familiar',show:()=>F('goOpen'),hint:'The object from Level 1 has a number on the bottom.',
+   open(){modal('The coffee cup','<p>It’s the coffee cup from the office. Same cold coffee. Same greasy fingerprints. They fit your fingers perfectly. They were always yours.</p><p>On the bottom, in marker: <b style="font-size:1.4rem">3</b></p>');solve(6,'The coffee cup from Level 1 is here. My fingerprints. Bottom says 3.');}},
+  {id:'doors',clue:7,x:72,y:74,label:'Floating doors',right:true,show:()=>F('goOpen'),hint:'Pick the floating door with the number from the cup.',
+   open(){if(F('doorsDone')){modal('Floating doors','<p>Door 3 led you to the last door.</p>');return;}
+    let h='<p>Five doors drift in the dark, slowly turning.</p><div class="doors">';for(let i=1;i<=5;i++)h+=`<button data-d="${i}">${i}</button>`;h+='</div><div class="msg" aria-live="polite"></div>';
+    modal('Floating doors',h,{mount(r){r.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{const m=r.querySelector('.msg');if(b.dataset.d==='3'){sfx.creak();setF('doorsDone');solve(7,'Door 3 led to the final door. None of them go outside.');modal('Door 3','<p>Stairs, and more stairs, and then a single plain door with a purple keyhole.</p>');}else{sfx.bad();m.className='msg bad';m.textContent=`Door ${b.dataset.d}: endless stairs. You end up right back here.`;}});}});}},
+  {id:'final',clue:8,x:50,y:13,label:'The final door',show:()=>F('doorsDone'),hint:'Use the purple key on the final door.',
+   open(){if(!has('purple')){modal('The final door','<p>A purple keyhole. You need the right key.</p>');return;}
+    modal('The final door','<p>This has to be the way out.</p>',{actions:[{label:'Use purple key',primary:true,fn(){take('purple');setF('final');close();sfx.creak();solve(8,'The final door opened into… another hallway. There was a black key.');
+      story('s4','<h2>Another hallway</h2><p>The door opens onto another hallway. And another. It doesn’t end. On the floor, right where you’ll step, is a black key.</p>','Pick it up',()=>keyReveal('black','The black key','It doesn’t open anything. It reveals the truth.','Read the truth',twist));}}]});}}
+ ]}
+];
+
+/* ================= TWIST ================= */
+function twist(){
+  story('s4','<div class="paper" style="transform:rotate(-1deg);text-align:left">“You thought you were escaping. Every key only moved you forward. You died before you reached this place, but you never knew it. There is no exit. Welcome to your forever.”</div>','…',()=>{
+    ambience();amb.forEach(n=>{try{n.stop()}catch(e){}});amb=[];
+    story('','',null);setTimeout(()=>{sfx.creak();
+      setTimeout(()=>story('wallpaper','<p>A door creaks open. Behind it, the same yellow wallpaper from Level 1.</p><h2>The game starts over.</h2>','Wake up',()=>{const loop=S.loop+1;S=fresh(loop);save();ambience();levelIntro();}),1600);},1800);
+  });
+}
+
+/* ================= RENDER ================= */
+const sceneEl=document.getElementById('scene');
+function renderScene(){
+  const L=LEVELS[S.level];
+  sceneEl.className='scene lv'+(S.level+1);
+  let h=L.deco;
+  L.spots.forEach(s=>{if(s.show&&!s.show())return;const done=s.done?s.done():(s.clue&&solved(s.clue));
+    const seen=(S.flags.seen||{})[S.level+s.id];
+    h+=`<button class="hot ${s.right?'right':''} ${done?'done':''} ${seen?'':'new'}" style="left:clamp(18px,${s.x}%,calc(100% - 18px));top:clamp(18px,${s.y}%,calc(100% - 18px))" data-id="${s.id}"><span class="ring"></span><span class="lbl">${s.label}</span></button>`;});
+  sceneEl.innerHTML=h;
+  sceneEl.querySelectorAll('.hot').forEach(b=>b.onclick=()=>{sfx.click();S.flags.seen=S.flags.seen||{};S.flags.seen[S.level+b.dataset.id]=1;save();L.spots.find(s=>s.id===b.dataset.id).open();});
+}
+function renderInv(){const el=document.getElementById('inv');el.innerHTML=S.inv.length?S.inv.map(i=>`<span class="item">${ITEMS[i].svg}${ITEMS[i].n}</span>`).join(''):'<span class="empty">Nothing yet. Search the room.</span>';}
+function renderJournal(){const el=document.getElementById('journal');el.innerHTML=S.journal.length?S.journal.map(j=>`<li><span>L${j.l+1}</span>${j.t}</li>`).join(''):'<li class="empty" style="font-family:Jost">Clues you find get written here.</li>';el.scrollTop=el.scrollHeight;}
+function renderHUD(){const L=LEVELS[S.level];let n=0;for(let i=1;i<=8;i++)if(solved(i))n++;
+  document.getElementById('lvTitle').textContent=`Level ${S.level+1}: ${L.name}`;
+  document.getElementById('lvSub').textContent=L.goal;
+  document.getElementById('count').textContent=`${n}/8`;
+  document.getElementById('loopTxt').textContent=S.loop>1?`Loop ${S.loop}. You’ve been here before.`:'The Never-Ending Levels';
+  renderJournal();}
+function renderAll(){renderScene();renderInv();renderHUD();}
+
+document.getElementById('hintBtn').onclick=()=>{const L=LEVELS[S.level];
+  const s=L.spots.find(s=>(!s.show||s.show())&&!(s.done?s.done():(s.clue&&solved(s.clue))));
+  modal('Hint',`<p>${s?s.hint:'Look for anything new that appeared in the room.'}</p>`);};
+document.getElementById('resetBtn').onclick=()=>modal('Start over?','<p>This clears your progress and sends you back to Level 1.</p>',{actions:[{label:'Start over',primary:true,fn(){S=fresh(1);save();close();ambience();levelIntro();}}]});
+
+/* ================= BOOT ================= */
+renderAll();
+if(!started){
+  story('s1','<h2>The Never-Ending Levels</h2><p>Four rooms. Four keys. Find every clue, open every door, and get out.<br>At least, that’s what you think.</p>','Begin',()=>levelIntro());
+}
+</script>
+</body>
+</html>
